@@ -6,9 +6,9 @@ import { http } from '@/services/http'
 const props = defineProps({
   id: { required: true }
 })
+console.log(props);
 const event = ref(null)
 const route = useRoute()
-// const id = route.params.id
 onMounted(async () => {
   try {
     const res = await http.get(`events/${props.id}`)
