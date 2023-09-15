@@ -1,13 +1,13 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { http } from '@/services/http'
+import type { EventItem } from '@/types'
 
 const props = defineProps({
-  id: { required: true }
+  id: { type: Number, required: true }
 })
-console.log(props);
-const event = ref(null)
+const event: Ref<EventItem | null> = ref(null)
 const route = useRoute()
 onMounted(async () => {
   try {
@@ -26,4 +26,3 @@ onMounted(async () => {
     <p>{{ event.description }}</p>
   </div>
 </template>
-<style></style>
