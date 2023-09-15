@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import EvnetListView from '../views/EvnetListView.vue'
 import AboutView from '../views/AboutView.vue'
 import EventView from '../views/EventView.vue'
+import TodoView from '../views/TodoView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,7 +27,13 @@ const router = createRouter({
       name: 'event',
       props: true,
       component: EventView
-    }
+    },
+		{
+			path: '/todos',
+			name: 'todo',
+			component: TodoView
+		}
+
   ]
 })
 

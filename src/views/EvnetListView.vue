@@ -1,9 +1,11 @@
-<script setup>
-import { ref, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, Ref } from 'vue'
 import { http } from '@/services/http'
 import EventCard from '@/components/EventCard.vue'
+import type { EventItem } from '@/types';
 
-const events = ref(null)
+
+const events: Ref<EventItem[] | null> = ref(null)
 
 // onMounted(() => {
 // 	axios.get('https://my-json-server.typicode.com/Code-Pop/Real-World_vue-3/events')
@@ -18,6 +20,8 @@ onMounted(async () => {
   try {
     const res = await http.get('/events')
     events.value = res.data
+		console.log(events);
+		
   } catch (e) {
     console.log(e)
   }
