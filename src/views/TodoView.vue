@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, Ref, computed, ComputedRef } from 'vue'
-import type { TodoItem, TodoFilter } from '@/types'
+import { ref, Ref, computed, ComputedRef, onMounted, watch } from 'vue'
+import { writeLocalStorage, readLocalStorage } from '@/services/local-storage';
+import type { TodoItem, TodoFilter } from '@/types.ts'
+
 let todos: Ref<TodoItem[]> = ref([])
 let newTask: Ref<TodoItem> = ref({
   label: '',
@@ -20,16 +22,30 @@ let fielteredTodos: ComputedRef<TodoItem[]> = computed(() => {
   }
 })
 
-function addTask() {
-  if (newTask.value.label) {
+function addTask(): void {
+  if (newTask.value.label.trim()) {
     newTask.value.id = Math.random() * Math.random() + 1
     todos.value.push({ ...newTask.value })
-    console.log(newTask.value.id)
-
     newTask.value.label = ''
     newTask.value.type = 'personal'
   }
 }
+
+function removeTask(idx: number): void {
+	todos.value.splice(idx, 1)	
+}
+
+onMounted(() => {
+	let localTodos = readLocalStorage('todos')
+	if (localTodos) {
+		todos.value = JSON.parse(localTodos);
+	}
+})
+
+watch(todos, (val) => {
+	writeLocalStorage('todos', val);
+},{deep: true})
+
 </script>
 
 <template lang="">
@@ -61,13 +77,13 @@ function addTask() {
       <li
         class="card"
         :class="{ completed: todo.isCompleted }"
-        v-for="todo in fielteredTodos"
+        v-for="(todo, idx) in fielteredTodos"
         :key="todo.id"
       >
         <input type="checkbox" v-model="todo.isCompleted" />
         <h3>{{ todo.label }}</h3>
         | ({{ todo.type }})
-        <button class="card__button">&times;</button>
+        <button class="card__button" @click="removeTask(idx)">&times;</button>
       </li>
     </ul>
   </div>
@@ -114,7 +130,7 @@ button.card__button {
 }
 
 input[type='checkbox'] {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 button.card__button:hover {

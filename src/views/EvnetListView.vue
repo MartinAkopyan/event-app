@@ -20,7 +20,6 @@ onMounted(async () => {
   try {
     const res = await http.get('/events')
     events.value = res.data
-		console.log(events);
 		
   } catch (e) {
     console.log(e)

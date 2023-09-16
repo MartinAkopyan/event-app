@@ -19,7 +19,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div v-if="event">
+  <div v-if="event" >
     <h2>Event #{{ route.params.id }}</h2>
     <h1>{{ event.title }}</h1>
     <p>{{ event.time }} on {{ event.date }} @ {{ event.location }}</p>
