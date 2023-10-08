@@ -1,56 +1,37 @@
 <script setup lang="ts">
 import { ref, Ref, computed, ComputedRef, onMounted, watch } from 'vue'
-import { writeLocalStorage, readLocalStorage } from '@/services/local-storage'
 import type { TodoItem, TodoFilter } from '@/types.ts'
+import { useTodoStore } from '@/stores/TodoStore'
 import TodoForm from '@/components/TodoForm.vue'
 import TodoCard from '@/components/TodoCard.vue'
 
-let todos = ref<TodoItem[]>([])
-let newTask = ref<TodoItem>({
-  label: '',
-  type: 'personal',
-  isCompleted: false,
-  id: null
-})
+const store = useTodoStore()
+
+let todos = store.todoList
+
+let newTask = store.newTask;
+
 let todosFilter = ref<TodoFilter>('all')
 
-let fielteredTodos: ComputedRef<TodoItem[]> = computed(() => {
+let filteredTodos: ComputedRef<TodoItem[]> = computed(() => {
   if (todosFilter.value === 'incomplete') {
-    return todos.value.filter((todo: TodoItem) => !todo.isCompleted)
+    return todos.filter((todo: TodoItem) => !todo.isCompleted)
   } else if (todosFilter.value === 'complete') {
-    return todos.value.filter((todo: TodoItem) => todo.isCompleted)
+    return todos.filter((todo: TodoItem) => todo.isCompleted)
   } else {
-    return todos.value
+    return todos
   }
 })
 
-function addTask() {
-  if (newTask.value.label.trim()) {
-    newTask.value.id = Math.random() * Math.random() + 1
-    todos.value.unshift({ ...newTask.value })
-    newTask.value.label = ''
-    newTask.value.type = 'personal'
-  }
+
+const addTask = () => {
+	store.addTask()
 }
 
-function removeTask(idx: number): void {
-  todos.value.splice(idx, 1)
+const removeTask = (idx: number) => {
+	store.removeTask(idx)
 }
 
-onMounted(() => {
-  let localTodos = readLocalStorage('todos')
-  if (localTodos) {
-    todos.value = JSON.parse(localTodos)
-  }
-})
-
-watch(
-  todos,
-  (val) => {
-    writeLocalStorage('todos', val)
-  },
-  { deep: true }
-)
 </script>
 
 <template lang="">
@@ -66,7 +47,7 @@ watch(
 
     <ul v-auto-animate>
       <TodoCard
-        v-for="(todo, idx) in fielteredTodos"
+        v-for="(todo, idx) in filteredTodos"
         :key="todo.id"
         :todo="todo"
         @delete-task="removeTask(idx)"
