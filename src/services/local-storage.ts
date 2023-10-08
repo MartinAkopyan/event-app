@@ -3,9 +3,9 @@ export const writeLocalStorage = (key: string, value: object | string) => {
 	window.localStorage.setItem(key, data);
 }
 
-export const readLocalStorage = (key: string) => {
+export const readLocalStorage = (key: string, parseData: boolean = false) => {
 	let data = window.localStorage.getItem(key);
-	if (data) {
+	if (data && parseData) {
 		data = JSON.parse(data)
 	}
 
